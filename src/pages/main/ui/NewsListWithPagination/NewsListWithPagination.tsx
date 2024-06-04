@@ -4,6 +4,9 @@ import { NewsList } from '@/widgets/news';
 import { IFilters } from '@/shared/interfaces';
 import { INews } from '@/entities/news';
 import { usePaginationNews } from '../../utils/hooks/usePaginationNews';
+import { setCurrentNews } from '@/entities/news/model/newSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
 	filters: IFilters;
@@ -14,6 +17,14 @@ interface Props {
 const NewsListWithPagination = ({ filters, news, isLoading }: Props) => {
 	const { handleNextPage, handlePreviousPage, handlePageClick } =
 		usePaginationNews(filters);
+
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const navigateTo = (news: INews) => {
+		dispatch(setCurrentNews(news));
+		navigate(`/news/${news.id}`);
+	};
 	return (
 		<Pagination
 			top
@@ -29,6 +40,9 @@ const NewsListWithPagination = ({ filters, news, isLoading }: Props) => {
 				type="item"
 				isLoading={isLoading}
 				news={news}
+				viewNewsSlot={(news: INews) => (
+					<p onClick={() => navigateTo(news)}>view more...</p>
+				)}
 			/>
 		</Pagination>
 	);
